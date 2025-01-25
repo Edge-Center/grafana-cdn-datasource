@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "cdn-datasource",
+  "id": "edgecenter-cdn-datasource",
+  "metrics": true,
+  "backend": true,
+  "alerting": true,
+  "executable": "gpx_cdn_datasource",
+  "info": {
+    "description": "",
+    "author": {
+      "name": "EdgeCenter",
+      "url": "https://edgecenter.ru/",
+      "email": "support@edgecenter.ru"
+    },
+    "keywords": ["cdn", "statistics"],
+    "logos": {
+      "small": "img/logo-ec-small.svg",
+      "large": "img/logo-ec-large-black.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/Edge-Center/grafana-cdn-datasource"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/Edge-Center/grafana-cdn-datasource/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.4.0",
+    "plugins": []
+  }
+}
