@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { EditorProps } from "./types";
-import { SecureJsonData } from "../../types";
+import { EditorProps } from './types';
+import { SecureJsonData } from '../../types';
 
 type OnChangeType = () => void;
 

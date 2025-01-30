@@ -15,7 +15,8 @@
       "plugins": ["deprecation"],
       "files": ["src/**/*.{ts,tsx}"],
       "rules": {
-        "deprecation/deprecation": "warn"
+        "deprecation/deprecation": "warn",
+        "@typescript-eslint/array-type": "off"
       },
       "parserOptions": {
         "project": "./tsconfig.json"

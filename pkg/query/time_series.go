@@ -1,102 +1,65 @@
 package query
 
 import (
-	"fmt"
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
-	"github.com/edge-center/cdn-datasource/pkg/models"
-	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"time"
 )
 
-func NewTimeSeriesFrame(query backend.DataQuery, queryModel models.QueryModel, response *statistics.ResourceStatisticsTimeSeriesResponse) []*data.Frame {
-	var metrics = queryModel.Metrics
-	var groupBy = queryModel.GroupBy
+func NewTimeSeriesFrame(qm models.QueryModel, response *statistics.ResourceStatisticsTimeSeriesResponse) []*data.Frame {
+	var metrics = qm.Metrics
+	var groupBy = qm.GroupBy
 	var frames []*data.Frame
 
 	for _, metric := range metrics {
-		for _, resourceData := range *response {
-			labels := generateLabels(&resourceData, groupBy, metric)
+		for _, timeSeriesData := range *response {
+			labels := generateLabels(&timeSeriesData, groupBy, metric)
 
 			switch metric {
-			case statistics.MetricUpstreamBytes:
-				frames = append(frames, NewFrameForMetricBytes(string(metric), resourceData.Metrics.UpstreamBytes, labels, queryModel))
-			case statistics.MetricSentBytes:
-				frames = append(frames, NewFrameForMetricBytes(string(metric), resourceData.Metrics.SentBytes, labels, queryModel))
-			case statistics.MetricShieldBytes:
-				frames = append(frames, NewFrameForMetricBytes(string(metric), resourceData.Metrics.ShieldBytes, labels, queryModel))
-			case statistics.MetricTotalBytes:
-				frames = append(frames, NewFrameForMetricBytes(string(metric), resourceData.Metrics.TotalBytes, labels, queryModel))
-			case statistics.MetricCdnBytes:
-				frames = append(frames, NewFrameForMetricBytes(string(metric), resourceData.Metrics.CDNBytes, labels, queryModel))
-			case statistics.MetricRequestTime:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.RequestTime, labels, queryModel))
-			case statistics.MetricRequests:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.Requests, labels, queryModel))
-			case statistics.MetricResponses2xx:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.Responses2xx, labels, queryModel))
-			case statistics.MetricResponses3xx:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.Responses3xx, labels, queryModel))
-			case statistics.MetricResponses4xx:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.Responses4xx, labels, queryModel))
-			case statistics.MetricResponses5xx:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.Responses5xx, labels, queryModel))
-			case statistics.MetricResponsesHit:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.ResponsesHit, labels, queryModel))
-			case statistics.MetricResponsesMiss:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.ResponsesMiss, labels, queryModel))
-			case statistics.MetricImageProcessed:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.ImageProcessed, labels, queryModel))
-			case statistics.MetricOriginResponseTime:
-				frames = append(frames, NewFrameForMetricInt(string(metric), resourceData.Metrics.OriginResponseTime, labels, queryModel))
-			case statistics.MetricCacheHitTrafficRatio:
-				frames = append(frames, NewFrameForMetricPercent(string(metric), resourceData.Metrics.CacheHitTrafficRatio, labels, queryModel))
-			case statistics.MetricCacheHitRequestsRatio:
-				frames = append(frames, NewFrameForMetricPercent(string(metric), resourceData.Metrics.CacheHitRequestsRatio, labels, queryModel))
-			case statistics.MetricShieldTrafficRatio:
-				frames = append(frames, NewFrameForMetricPercent(string(metric), resourceData.Metrics.ShieldTrafficRatio, labels, queryModel))
+			case string(statistics.MetricUpstreamBytes):
+				frames = append(frames, NewFrameForMetricBytes(string(metric), timeSeriesData.Metrics.UpstreamBytes, labels, qm))
+			case string(statistics.MetricSentBytes):
+				frames = append(frames, NewFrameForMetricBytes(string(metric), timeSeriesData.Metrics.SentBytes, labels, qm))
+			case string(statistics.MetricShieldBytes):
+				frames = append(frames, NewFrameForMetricBytes(string(metric), timeSeriesData.Metrics.ShieldBytes, labels, qm))
+			case string(statistics.MetricTotalBytes):
+				frames = append(frames, NewFrameForMetricBytes(string(metric), timeSeriesData.Metrics.TotalBytes, labels, qm))
+			case string(statistics.MetricCdnBytes):
+				frames = append(frames, NewFrameForMetricBytes(string(metric), timeSeriesData.Metrics.CDNBytes, labels, qm))
+			case string(statistics.MetricRequestTime):
+				frames = append(frames, NewFrameForMetricTime(string(metric), timeSeriesData.Metrics.RequestTime, labels, qm))
+			case string(statistics.MetricOriginResponseTime):
+				frames = append(frames, NewFrameForMetricTime(string(metric), timeSeriesData.Metrics.OriginResponseTime, labels, qm))
+			case string(statistics.MetricRequests):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.Requests, labels, qm))
+			case string(statistics.MetricResponses2xx):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.Responses2xx, labels, qm))
+			case string(statistics.MetricResponses3xx):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.Responses3xx, labels, qm))
+			case string(statistics.MetricResponses4xx):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.Responses4xx, labels, qm))
+			case string(statistics.MetricResponses5xx):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.Responses5xx, labels, qm))
+			case string(statistics.MetricResponsesHit):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.ResponsesHit, labels, qm))
+			case string(statistics.MetricResponsesMiss):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.ResponsesMiss, labels, qm))
+			case string(statistics.MetricImageProcessed):
+				frames = append(frames, NewFrameForMetricInt(string(metric), timeSeriesData.Metrics.ImageProcessed, labels, qm))
+			case string(statistics.MetricCacheHitTrafficRatio):
+				frames = append(frames, NewFrameForMetricPercent(string(metric), timeSeriesData.Metrics.CacheHitTrafficRatio, labels, qm))
+			case string(statistics.MetricCacheHitRequestsRatio):
+				frames = append(frames, NewFrameForMetricPercent(string(metric), timeSeriesData.Metrics.CacheHitRequestsRatio, labels, qm))
+			case string(statistics.MetricShieldTrafficRatio):
+				frames = append(frames, NewFrameForMetricPercent(string(metric), timeSeriesData.Metrics.ShieldTrafficRatio, labels, qm))
+			case string(PluginMetricBandwidth):
+				frames = append(frames, NewFrameForMetricBandwidth(string(metric), timeSeriesData.Metrics.TotalBytes, labels, qm))
 			}
 		}
 	}
 
 	return frames
-}
-
-func generateLabels(data *statistics.ResourceStatisticsTimeSeriesData, groupBy []statistics.GroupBy, metric statistics.Metric) map[string]string {
-	labels := make(map[string]string)
-
-	for _, group := range groupBy {
-		switch group {
-		case statistics.GroupByResource:
-			if data.Resource != nil {
-				labels[string(group)] = fmt.Sprintf("%.0f", *data.Resource)
-			}
-		case statistics.GroupByRegion:
-			if data.Region != nil {
-				labels[string(group)] = *data.Region
-			}
-		case statistics.GroupByVhost:
-			if data.Vhost != nil {
-				labels[string(group)] = *data.Vhost
-			}
-		case statistics.GroupByClient:
-			if data.Client != nil {
-				labels[string(group)] = fmt.Sprintf("%.0f", *data.Client)
-			}
-		case statistics.GroupByClientRegion:
-			if data.ClientRegion != nil {
-				labels[string(group)] = *data.ClientRegion
-			}
-		case statistics.GroupByCountry:
-			if data.Country != nil {
-				labels[string(group)] = *data.Country
-			}
-		}
-	}
-
-	labels["metric"] = string(metric)
-
-	return labels
 }
 
 func NewFrameForMetricBytes(name string, dataPoints [][]uint64, labels map[string]string, qm models.QueryModel) *data.Frame {
@@ -181,11 +144,10 @@ func NewFrameForMetricInt(name string, dataPoints [][]uint64, labels map[string]
 	return frame
 }
 
-func NewFrameForMetricFloat(name string, dataPoints [][]float64, labels map[string]string, qm models.QueryModel) *data.Frame {
+func NewFrameForMetricTime(name string, dataPoints [][]uint64, labels map[string]string, qm models.QueryModel) *data.Frame {
 	frame := data.NewFrame(name)
 	timestamps := make([]time.Time, 0, len(dataPoints))
-	values := make([]float64, 0, len(dataPoints))
-	decimals := uint16(2)
+	values := make([]uint64, 0, len(dataPoints))
 
 	for _, point := range dataPoints {
 		if len(point) < 2 {
@@ -198,8 +160,39 @@ func NewFrameForMetricFloat(name string, dataPoints [][]float64, labels map[stri
 	timeField := data.NewField(TimeSeriesTimeFieldName, nil, timestamps)
 
 	valueField := data.NewField(TimeSeriesValuesFieldName, labels, values).SetConfig(&data.FieldConfig{
-		Decimals:          &decimals,
 		DisplayNameFromDS: renderTemplate(qm.LegendFormat, labels),
+		Unit:              "ms",
+	})
+
+	frame.Fields = append(frame.Fields, timeField, valueField)
+
+	return frame
+}
+
+func NewFrameForMetricBandwidth(name string, dataPoints [][]uint64, labels map[string]string, qm models.QueryModel) *data.Frame {
+	frame := data.NewFrame(name)
+	timestamps := make([]time.Time, 0, len(dataPoints))
+	values := make([]float64, 0, len(dataPoints))
+	decimals := uint16(2)
+	period, err := statistics.GranularityToSeconds(qm.Granularity)
+	if err != nil {
+		return frame
+	}
+
+	for _, point := range dataPoints {
+		if len(point) < 2 {
+			continue
+		}
+		timestamps = append(timestamps, time.Unix(int64(point[0]), 0))
+		values = append(values, float64(point[1]*8)/float64(period))
+	}
+
+	timeField := data.NewField(TimeSeriesTimeFieldName, nil, timestamps)
+
+	valueField := data.NewField(TimeSeriesValuesFieldName, labels, values).SetConfig(&data.FieldConfig{
+		DisplayNameFromDS: renderTemplate(qm.LegendFormat, labels),
+		Unit:              "Bps",
+		Decimals:          &decimals,
 	})
 
 	frame.Fields = append(frame.Fields, timeField, valueField)

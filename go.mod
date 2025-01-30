@@ -1,4 +1,4 @@
-module github.com/edge-center/cdn-datasource
+module github.com/Edge-Center/grafana-cdn-datasource
 
 go 1.22.7
 
@@ -96,4 +96,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/Edge-Center/edgecentercdn-go => /Users/deniszaitsev/Workspace/github.com/Edge-Center/edgecentercdn-go
+replace github.com/Edge-Center/edgecentercdn-go v0.1.10 => github.com/Edge-Center/edgecentercdn-go v0.1.13-0.20250129072528-51c08dfb62f3

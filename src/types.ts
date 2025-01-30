@@ -1,52 +1,45 @@
-import {DataSourceJsonData, SelectableValue} from '@grafana/data';
+import { DataSourceJsonData, SelectableValue } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 
 export interface Query extends DataQuery {
-  queryType: 'table' | 'timeSeries'
+  queryType: 'table' | 'timeSeries';
 
-  metricsStr: string
-  regionsStr: string
-  vhostsStr: string
-  resourcesStr: string
-  clientsStr: string
-  countriesStr: string
+  regionsStr: string;
+  hostsStr: string;
+  resourcesStr: string;
+  clientsStr: string;
+  countriesStr: string;
 
-  metrics: Array<string>
-  regions: Array<string>
-  vhosts: Array<string>
-  countries: Array<string>
-  resources: Array<number>
-  clients: Array<number>
 
-  groupby: Array<string>
-  granularity: string
-  legendFormat: string
+  metrics: string[];
+  regions: string[];
+  hosts: string[];
+  countries: string[];
+  resources: number[];
+  clients: number[];
+
+  groupby: string[];
+  granularity: string;
+  legendFormat: string;
 }
 
 export const DEFAULT_QUERY: Partial<Query> = {
   queryType: 'timeSeries',
-  metricsStr: 'total_bytes',
+  metrics: ['total_bytes'],
   groupby: ['resource'],
-  granularity: '1h'
+  granularity: '1h',
 };
 
 export enum Variable {
-  Resource = "resource",
-  Client = "client",
-  Vhost = "vhost",
-  Region = "region",
+  Resource = 'resource',
+  Client = 'client',
+  Host = 'host',
+  Region = 'region',
+  Country = 'country',
 }
 
 export interface VariableQuery {
   selector: SelectableValue<Variable>;
-}
-
-export const defaultVariableQuery: Partial<VariableQuery> = {
-  selector: { value: Variable.Resource, label: "resourceID" },
-};
-
-export interface GCVariableQuery {
-
 }
 
 export interface DataSourceOptions extends DataSourceJsonData {
@@ -57,26 +50,58 @@ export interface SecureJsonData {
   apiKey?: string;
 }
 
-export type ResourcesResponse = {
+export type CdnResourcesResponse = {
   resources: Array<{
     id: number;
     cname: string;
     client: number;
   }>;
-}
+};
+
+export type ResourcesResponse = {
+  resources: number[];
+};
+
+export type ClientsResponse = {
+  clients: number[];
+};
+
+export type HostsResponse = {
+  hosts: string[];
+};
 
 export type MetricsResponse = {
-  metrics: Array<string>;
-}
+  metrics: string[];
+};
+
+export type CountriesResponse = {
+  countries: string[];
+};
 
 export type RegionsResponse = {
-  regions: Array<string>;
-}
+  regions: string[];
+};
 
 export type GroupsResponse = {
-  groups: Array<string>;
-}
+  groups: string[];
+};
 
 export type GranularityResponse = {
-  granularity: Array<string>;
-}
+  granularity: string[];
+};
+
+export type StringDetail = {
+  label: string;
+  desc: string;
+};
+
+export type Strings = {
+  [key: string]: StringDetail;
+};
+
+export type StringsResponse = {
+  metrics: Strings;
+  pluginMetrics: Strings;
+  groupBy: Strings;
+  granularity: Strings;
+};

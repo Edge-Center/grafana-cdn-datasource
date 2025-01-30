@@ -3,9 +3,9 @@ package plugin
 import (
 	"context"
 	"fmt"
-	"github.com/edge-center/cdn-datasource/pkg/client"
-	"github.com/edge-center/cdn-datasource/pkg/models"
-	"github.com/edge-center/cdn-datasource/pkg/query"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/client"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/query"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 )

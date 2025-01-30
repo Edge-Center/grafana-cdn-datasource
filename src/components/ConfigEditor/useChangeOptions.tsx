@@ -1,7 +1,6 @@
 import { ChangeEvent, useCallback } from 'react';
 import type { DataSourceOptions } from 'types';
-import { EditorProps } from "./types";
-
+import { EditorProps } from './types';
 
 type OnChangeType = (event: ChangeEvent<HTMLInputElement>) => void;
 

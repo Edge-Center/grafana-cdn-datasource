@@ -1,27 +1,29 @@
 import React, { FC } from 'react';
 import { InlineField, Input } from '@grafana/ui';
 import { useChangeInput } from '../useChangeInput';
+import type { DataSource } from '../../../datasource';
 
 export interface Props {
+  datasource: DataSource;
   value: string;
   onChange: (value: string) => void;
 }
-export const RegionsPicker: FC<Props> = ({ value, onChange }) => {
+export const HostsPicker: FC<Props> = ({ value, onChange }) => {
   const handleChange = useChangeInput(onChange);
 
   return (
     <InlineField
-      label="Regions"
-      tooltip="Filter by regions. Use commas to separate multiple values or reference variables."
+      label="Hosts"
+      tooltip={`Filter by hosts. Use commas to separate multiple values or reference variables.`}
       labelWidth={14}
       interactive
     >
       <Input
-        id="editor-query-regions"
+        id="editor-query-hosts"
         onChange={handleChange}
         value={value}
-        placeholder="Enter regions separated by commas"
         width={40}
+        placeholder="Enter hosts separated by commas"
       />
     </InlineField>
   );

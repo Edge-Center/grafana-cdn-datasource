@@ -1,26 +1,29 @@
 import { useMemo } from 'react';
+import { Strings } from '../../types';
+import { resolveLabel } from './utils';
 import type { SelectableValue } from '@grafana/data';
 
-export function useSelectableValues(value: Array<string> | string | undefined, label?: Array<string>): Array<SelectableValue<string>> | undefined {
+export function useSelectableValues(
+  values: string[] | string | undefined,
+  strings?: Strings
+): Array<SelectableValue<string>> | undefined {
   return useMemo(() => {
-    if (!value || value.length === 0) {
+    if (!values || values.length === 0) {
       return;
     }
 
-    if (Array.isArray(value)) {
-      const labels = label && label.length >= value.length ? label : value;
-
-
-      return value.map((item, index) => ({
-        label: labels[index] ?? item,
-        value: item,
+    if (Array.isArray(values)) {
+      return values.map((value, index) => ({
+        label: resolveLabel(value, strings),
+        value: value,
       }));
     }
 
-    return [{
-        label: label ?? value,
-        value: value,
-      }
-    ]
-  }, [label, value]);
+    return [
+      {
+        label: resolveLabel(values, strings),
+        value: values,
+      },
+    ] as Array<SelectableValue<string>>;
+  }, [strings, values]);
 }

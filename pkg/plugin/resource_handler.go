@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Edge-Center/edgecentercdn-go/resources"
-	client2 "github.com/edge-center/cdn-datasource/pkg/client"
-	"github.com/edge-center/cdn-datasource/pkg/models"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/client"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/query"
 	"net/http"
 
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
@@ -24,6 +25,7 @@ func NewResourceHandler(pluginSettings *models.PluginSettings) backend.CallResou
 	mux.HandleFunc("/regions", handleRegions)
 	mux.HandleFunc("/groups", handleGroups)
 	mux.HandleFunc("/granularity", handleGranularity)
+	mux.HandleFunc("/strings", handleStrings)
 
 	return httpadapter.New(mux)
 }
@@ -49,7 +51,7 @@ func handleResources(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client, err := client2.NewCdnServicePluginSettings(pluginSettings)
+	cdnClient, err := client.NewCdnServicePluginSettings(pluginSettings)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -60,7 +62,7 @@ func handleResources(w http.ResponseWriter, r *http.Request) {
 		Deleted: true,
 	}
 
-	list, err := client.Resources().List(ctx, req)
+	list, err := cdnClient.Resources().List(ctx, req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -92,7 +94,7 @@ func handleMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	out := map[string][]string{
-		"metrics": statistics.MetricsSuggestions,
+		"metrics": query.MetricsSuggestions,
 	}
 
 	j, err := json.Marshal(out)
@@ -170,6 +172,27 @@ func handleGranularity(w http.ResponseWriter, r *http.Request) {
 		"granularity": statistics.GranularitySuggestions,
 	}
 	j, err := json.Marshal(out)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, err = w.Write(j)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func handleStrings(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.NotFound(w, r)
+		return
+	}
+
+	j, err := json.Marshal(query.PluginStrings)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

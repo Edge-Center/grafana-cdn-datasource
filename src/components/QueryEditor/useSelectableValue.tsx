@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
+import { Strings } from '../../types';
+import { resolveLabel } from './utils';
 import type { SelectableValue } from '@grafana/data';
 
-export function useSelectableValue(value: string | undefined, label?: string): SelectableValue<string> | undefined {
+export function useSelectableValue(value: string | undefined, strings?: Strings): SelectableValue<string> | undefined {
   return useMemo(() => {
     if (!value) {
       return;
     }
 
     return {
-      label: label ?? value,
+      label: resolveLabel(value, strings),
       value: value,
-    };
-  }, [label, value]);
+    } as SelectableValue<string>;
+  }, [strings, value]);
 }

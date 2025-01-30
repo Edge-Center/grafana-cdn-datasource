@@ -1,9 +1,9 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import { Alert, InlineField, Input, SecretInput } from '@grafana/ui';
-import { useChangeOptions } from "./useChangeOptions";
-import { useChangeSecureOptions } from "./useChangeSecureOptions";
-import { useResetSecureOptions } from "./useResetSecureOptions";
-import { EditorProps } from "./types";
+import { useChangeOptions } from './useChangeOptions';
+import { useChangeSecureOptions } from './useChangeSecureOptions';
+import { useResetSecureOptions } from './useResetSecureOptions';
+import { EditorProps } from './types';
 
 export const ConfigEditor: FC<EditorProps> = (props) => {
   const { jsonData, secureJsonData, secureJsonFields } = props.options;
@@ -13,13 +13,18 @@ export const ConfigEditor: FC<EditorProps> = (props) => {
 
   return (
     <>
-      <InlineField label="API URL" labelWidth={14} interactive tooltip="The URL for the API endpoint, e.g., https://api.edgecenter.ru">
+      <InlineField
+        label="API URL"
+        labelWidth={14}
+        interactive
+        tooltip="The URL for the API endpoint, e.g., https://api.edgecenter.ru"
+      >
         <Input
-            id="config-editor-api-url"
-            onChange={onApiUrlChange}
-            value={jsonData.apiUrl}
-            placeholder="Enter the full API URL, e.g., https://api.edgecenter.ru"
-            width={40}
+          id="config-editor-api-url"
+          onChange={onApiUrlChange}
+          value={jsonData.apiUrl}
+          placeholder="Enter the full API URL, e.g., https://api.edgecenter.ru"
+          width={40}
         />
       </InlineField>
 
@@ -36,11 +41,11 @@ export const ConfigEditor: FC<EditorProps> = (props) => {
         />
       </InlineField>
 
-      <Alert severity={"info"} title="How to create a API token?">
+      <Alert severity={'info'} title="How to create a API token?">
         <a
-            href="https://edgecenter.ru/en/knowledge-base/account-management/get-a-permanent-token"
-            target="_blank"
-            rel="noreferrer"
+          href="https://edgecenter.ru/en/knowledge-base/account-management/get-a-permanent-token"
+          target="_blank"
+          rel="noreferrer"
         >
           https://edgecenter.ru/en/knowledge-base/account-management/get-a-permanent-token
         </a>

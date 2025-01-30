@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
-	"github.com/edge-center/cdn-datasource/pkg/client"
-	"github.com/edge-center/cdn-datasource/pkg/models"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/client"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
@@ -27,18 +27,18 @@ func RunQuery(ctx context.Context, pluginSettings *models.PluginSettings, query 
 	}
 
 	req := &statistics.ResourceStatisticsTimeSeriesRequest{
-		Metrics:     qm.Metrics,
+		Metrics:     GetMetrics(qm.Metrics),
 		Regions:     qm.Regions,
 		GroupBy:     qm.GroupBy,
 		Granularity: qm.Granularity,
-		VHosts:      qm.Vhosts,
+		Hosts:       qm.Hosts,
 		Resources:   qm.Resources,
 		Countries:   qm.Countries,
 		From:        query.TimeRange.From,
 		To:          query.TimeRange.To,
 	}
 
-	log.DefaultLogger.Info(fmt.Sprintf("stats request: %+v", req.ToPath()))
+	log.DefaultLogger.Info(fmt.Sprintf("Stats request details: %+v", req.ToPath()))
 
 	resp, err := cdnClient.Statistics().GetTimeSeriesData(ctx, req)
 
@@ -46,9 +46,7 @@ func RunQuery(ctx context.Context, pluginSettings *models.PluginSettings, query 
 		return response
 	}
 
-	log.DefaultLogger.Info(fmt.Sprintf("stats response: %+v", resp))
-
-	frames := NewTimeSeriesFrame(query, qm, resp)
+	frames := NewTimeSeriesFrame(qm, resp)
 
 	if len(frames) == 0 {
 		return response

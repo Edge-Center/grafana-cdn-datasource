@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Edge-Center/edgecentercdn-go"
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
-	"github.com/edge-center/cdn-datasource/pkg/models"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
 	"net/http"
 )
 
