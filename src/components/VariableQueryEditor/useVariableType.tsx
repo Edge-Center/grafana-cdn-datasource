@@ -1,5 +1,5 @@
-import {Variable} from "../../types";
-import {useMemo} from "react";
+import { useMemo } from "react";
+import { Variable } from "../../types";
 
 export const useVariableType = () => {
     return useMemo(() => {
