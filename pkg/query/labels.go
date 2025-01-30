@@ -3,12 +3,13 @@ package query
 import (
 	"fmt"
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
+	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
 )
 
-func generateLabels(data *statistics.ResourceStatisticsTimeSeriesData, groupBy []statistics.GroupBy, metric string) map[string]string {
+func NewLabels(data *statistics.ResourceStatisticsTimeSeriesData, metric string, qm models.QueryModel) map[string]string {
 	labels := make(map[string]string)
 
-	for _, group := range groupBy {
+	for _, group := range qm.GroupBy {
 		switch group {
 		case statistics.GroupByResource:
 			if data.Resource != nil {
@@ -37,7 +38,7 @@ func generateLabels(data *statistics.ResourceStatisticsTimeSeriesData, groupBy [
 		}
 	}
 
-	labels["metric"] = string(metric)
+	labels["metric"] = metric
 
 	return labels
 }

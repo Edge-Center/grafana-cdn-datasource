@@ -9,12 +9,11 @@ import (
 
 func NewTimeSeriesFrame(qm models.QueryModel, response *statistics.ResourceStatisticsTimeSeriesResponse) []*data.Frame {
 	var metrics = qm.Metrics
-	var groupBy = qm.GroupBy
 	var frames []*data.Frame
 
 	for _, metric := range metrics {
 		for _, timeSeriesData := range *response {
-			labels := generateLabels(&timeSeriesData, groupBy, metric)
+			labels := NewLabels(&timeSeriesData, metric, qm)
 
 			switch metric {
 			case string(statistics.MetricUpstreamBytes):
