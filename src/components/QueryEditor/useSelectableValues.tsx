@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Strings } from '../../types';
-import { resolveLabel } from './utils';
+import {resolveLabel} from './utils';
 import type { SelectableValue } from '@grafana/data';
 
 export function useSelectableValues(

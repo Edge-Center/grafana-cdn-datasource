@@ -2,8 +2,15 @@ package models
 
 import "github.com/Edge-Center/edgecentercdn-go/statistics"
 
+type QueryType = string
+
+const (
+	QueryTypeTimeSeries = "timeSeries"
+	QueryTypeTable      = "table"
+)
+
 type QueryModel struct {
-	QueryType    string                  `json:"queryType"`
+	QueryType    QueryType               `json:"queryType"`
 	Metrics      []string                `json:"metrics"`
 	Regions      []statistics.Region     `json:"regions,omitempty"`
 	Hosts        []statistics.Host       `json:"hosts,omitempty"`

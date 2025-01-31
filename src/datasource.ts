@@ -1,23 +1,24 @@
-import { DataSourceInstanceSettings, CoreApp, ScopedVars, MetricFindValue } from '@grafana/data';
-import { DataSourceWithBackend } from '@grafana/runtime';
+import {CoreApp, DataSourceInstanceSettings, MetricFindValue, ScopedVars} from '@grafana/data';
+import {DataSourceWithBackend} from '@grafana/runtime';
 import {
-  Query,
+  CdnResourcesResponse,
+  ClientsResponse,
+  CountriesResponse,
   DataSourceOptions,
   DEFAULT_QUERY,
-  MetricsResponse,
-  RegionsResponse,
-  GroupsResponse,
   GranularityResponse,
-  VariableQuery,
-  ClientsResponse,
+  GroupsResponse,
   HostsResponse,
-  CdnResourcesResponse,
-  CountriesResponse,
+  MetricsResponse,
+  Query,
+  QueryTypesResponse,
+  RegionsResponse,
   StringsResponse,
+  VariableQuery,
 } from './types';
-import { VariableSupport } from './services/VariableSupport';
-import { parseNumbers, parseStrings } from './utils';
-import { countries } from './data/countries';
+import {VariableSupport} from './services/VariableSupport';
+import {parseNumbers, parseStrings} from './utils';
+import {countries} from './data/countries';
 
 export class DataSource extends DataSourceWithBackend<Query, DataSourceOptions> {
   public variableSupport: VariableSupport;
@@ -37,17 +38,16 @@ export class DataSource extends DataSourceWithBackend<Query, DataSourceOptions> 
   }
 
   public applyTemplateVariables(query: Query, scopedVars: ScopedVars): Query {
-    const q: Query = {
+    return {
       ...query,
+      queryType: query.queryType || DEFAULT_QUERY.queryType,
+      granularity: query.granularity || DEFAULT_QUERY.granularity,
       hosts: parseStrings(query.hostsStr, scopedVars, 'csv'),
       clients: parseNumbers(query.clientsStr, scopedVars, 'csv'),
       regions: parseStrings(query.regionsStr, scopedVars, 'csv'),
       countries: parseStrings(query.countriesStr, scopedVars, 'csv'),
       resources: parseNumbers(query.resourcesStr, scopedVars, 'csv'),
-      granularity: query.granularity || '1h',
     };
-    console.log(q, scopedVars);
-    return q;
   }
 
   public getAvailableResources(): Promise<CdnResourcesResponse> {
@@ -88,6 +88,10 @@ export class DataSource extends DataSourceWithBackend<Query, DataSourceOptions> 
 
   public getAvailableGranularity(): Promise<GranularityResponse> {
     return this.getResource('granularity');
+  }
+
+  public getAvailableQueryTypes(): Promise<QueryTypesResponse> {
+    return this.getResource('/query-types');
   }
 
   public getStrings(): Promise<StringsResponse> {
