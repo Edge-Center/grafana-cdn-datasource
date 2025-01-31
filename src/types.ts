@@ -1,15 +1,19 @@
 import { DataSourceJsonData, SelectableValue } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 
-export interface Query extends DataQuery {
-  queryType: 'table' | 'timeSeries';
+export enum QueryType {
+  TimeSeries = 'timeSeries',
+  Table      = 'table',
+}
+
+export type PluginQuery = {
+  queryType: QueryType;
 
   regionsStr: string;
   hostsStr: string;
   resourcesStr: string;
   clientsStr: string;
   countriesStr: string;
-
 
   metrics: string[];
   regions: string[];
@@ -23,11 +27,27 @@ export interface Query extends DataQuery {
   legendFormat: string;
 }
 
-export const DEFAULT_QUERY: Partial<Query> = {
-  queryType: 'timeSeries',
+export type Query = DataQuery & PluginQuery
+
+export const DEFAULT_QUERY: PluginQuery = {
+  queryType: QueryType.TimeSeries,
+
+  regionsStr: '',
+  hostsStr: '',
+  resourcesStr: '',
+  clientsStr: '',
+  countriesStr: '',
+
   metrics: ['total_bytes'],
+  regions: [],
+  hosts: [],
+  countries: [],
+  resources: [],
+  clients: [],
+
   groupby: ['resource'],
   granularity: '1h',
+  legendFormat: '',
 };
 
 export enum Variable {
@@ -90,6 +110,10 @@ export type GranularityResponse = {
   granularity: string[];
 };
 
+export type QueryTypesResponse = {
+  queryTypes: string[];
+}
+
 export type StringDetail = {
   label: string;
   desc: string;
@@ -104,4 +128,5 @@ export type StringsResponse = {
   pluginMetrics: Strings;
   groupBy: Strings;
   granularity: Strings;
+  queryTypes: Strings
 };

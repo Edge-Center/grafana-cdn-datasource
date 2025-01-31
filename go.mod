@@ -5,7 +5,7 @@ go 1.22.7
 toolchain go1.23.4
 
 require (
-	github.com/Edge-Center/edgecentercdn-go v0.1.10
+	github.com/Edge-Center/edgecentercdn-go v0.1.13
 	github.com/grafana/grafana-plugin-sdk-go v0.263.0
 )
 
@@ -95,5 +95,3 @@ require (
 	gopkg.in/fsnotify/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/Edge-Center/edgecentercdn-go v0.1.10 => github.com/Edge-Center/edgecentercdn-go v0.1.13-0.20250129072528-51c08dfb62f3

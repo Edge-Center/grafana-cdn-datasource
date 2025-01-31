@@ -17,8 +17,10 @@ import { useSelectableValues } from './useSelectableValues';
 import { CountriesPicker } from './fields/CountriesPicker';
 import { useStrings } from './useStrings';
 import { css } from '@emotion/css';
-import { GrafanaTheme2 } from '@grafana/data';
+import {GrafanaTheme2, SelectableValue} from '@grafana/data';
 import {getMetricStrings} from "./utils";
+import {QueryTypePicker} from "./fields/QueryTypePicker";
+import {QueryType} from "../../types";
 
 export const QueryEditor: FC<EditorProps> = (props) => {
   const { datasource, query } = props;
@@ -27,12 +29,19 @@ export const QueryEditor: FC<EditorProps> = (props) => {
   const groupBy = useSelectableValues(query.groupby, strings.value?.groupBy);
   const metrics = useSelectableValues(query.metrics, getMetricStrings(strings.value));
   const granularity = useSelectableValue(query.granularity, strings.value?.granularity);
+  const queryType = useSelectableValue(query.queryType, strings.value?.queryTypes);
   const legendFormat = query.legendFormat;
   const resources = query.resourcesStr;
   const clients = query.clientsStr;
   const countries = query.countriesStr;
   const hosts = query.hostsStr;
   const regions = query.regionsStr;
+
+
+  const onChangeQueryType = useChangeSelectableValue(props, {
+    propertyName: 'queryType',
+    runQuery: true,
+  });
 
   const onChangeGroupBy = useChangeSelectableValues(props, {
     propertyName: 'groupby',
@@ -94,9 +103,13 @@ export const QueryEditor: FC<EditorProps> = (props) => {
           </Stack>
 
           <Stack direction={'column'} gap={1}>
+            <QueryTypePicker value={queryType} onChange={onChangeQueryType} datasource={datasource} />
             <MetricPicker value={metrics} onChange={onChangeMetrics} datasource={datasource} />
             <GroupByPicker value={groupBy} onChange={onChangeGroupBy} datasource={datasource} />
-            <GranularityPicker value={granularity} onChange={onChangeGranularity} datasource={datasource} />
+            {
+                shouldRenderGranularityPicker(queryType) &&
+              <GranularityPicker value={granularity} onChange={onChangeGranularity} datasource={datasource} />
+            }
           </Stack>
         </Stack>
 
@@ -104,6 +117,13 @@ export const QueryEditor: FC<EditorProps> = (props) => {
       </Stack>
     </div>
   );
+};
+
+const shouldRenderGranularityPicker = (queryType: SelectableValue<string> | undefined) => {
+  if (!queryType) {
+    return true
+  }
+  return queryType.value === QueryType.TimeSeries;
 };
 
 function getStyles(theme: GrafanaTheme2) {

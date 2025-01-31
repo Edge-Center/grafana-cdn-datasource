@@ -6,7 +6,6 @@ import (
 	"github.com/Edge-Center/edgecentercdn-go/resources"
 	"github.com/Edge-Center/grafana-cdn-datasource/pkg/client"
 	"github.com/Edge-Center/grafana-cdn-datasource/pkg/models"
-	"github.com/Edge-Center/grafana-cdn-datasource/pkg/query"
 	"net/http"
 
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
@@ -26,6 +25,7 @@ func NewResourceHandler(pluginSettings *models.PluginSettings) backend.CallResou
 	mux.HandleFunc("/groups", handleGroups)
 	mux.HandleFunc("/granularity", handleGranularity)
 	mux.HandleFunc("/strings", handleStrings)
+	mux.HandleFunc("/query-types", handleQueryTypes)
 
 	return httpadapter.New(mux)
 }
@@ -94,7 +94,7 @@ func handleMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	out := map[string][]string{
-		"metrics": query.MetricsSuggestions,
+		"metrics": models.MetricsSuggestions,
 	}
 
 	j, err := json.Marshal(out)
@@ -192,7 +192,35 @@ func handleStrings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	j, err := json.Marshal(query.PluginStrings)
+	j, err := json.Marshal(models.PluginStrings)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, err = w.Write(j)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func handleQueryTypes(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.NotFound(w, r)
+		return
+	}
+
+	out := map[string][]string{
+		"queryTypes": []string{
+			models.QueryTypeTimeSeries,
+			models.QueryTypeTable,
+		},
+	}
+
+	j, err := json.Marshal(out)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -24,3 +24,18 @@ export const getMetricStrings = (strings: StringsResponse | undefined): Strings 
   }
   return {...strings.metrics, ...strings.pluginMetrics};
 }
+
+export const isEmpty = (target: any): boolean => {
+  if (target == null) {
+    return true;
+  }
+
+  if (Array.isArray(target)) {
+    return target.length === 0;
+  }
+
+  if (typeof target === 'string') {
+    return target.length === 0;
+  }
+  return true;
+};
